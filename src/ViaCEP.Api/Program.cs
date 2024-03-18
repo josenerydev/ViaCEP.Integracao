@@ -8,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 //    options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext") ?? throw new InvalidOperationException("Connection string 'ApplicationContext' not found.")));
 
 // Add services to the container.
+builder.Services.AddScoped<IEnderecoService, EnderecoService>();
+
 builder.Services.AddRefitClient<IViaCepApi>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br/"));
 

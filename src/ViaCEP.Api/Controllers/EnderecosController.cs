@@ -7,12 +7,14 @@ namespace ViaCEP.Api.Controllers;
 public class EnderecosController : ControllerBase
 {
     private readonly ILogger<EnderecosController> _logger;
-    private readonly IViaCepApi _viaCepApi;
+    private readonly IEnderecoService _enderecoService;
 
-    public EnderecosController(ILogger<EnderecosController> logger, IViaCepApi viaCepApi)
+    public EnderecosController(
+        ILogger<EnderecosController> logger,
+        IEnderecoService enderecoService)
     {
         _logger = logger;
-        _viaCepApi = viaCepApi;
+        _enderecoService = enderecoService;
     }
 
     //private readonly ApplicationContext _context;
@@ -31,11 +33,9 @@ public class EnderecosController : ControllerBase
 
     // GET: api/Enderecos/5
     [HttpGet("{cep}")]
-    public async Task<ActionResult<EnderecoResponse>> GetEndereco(string cep)
+    public async Task<ActionResult<EnderecoDto?>> GetEndereco(string cep)
     {
-        var endereco = await _viaCepApi.ObterEndereco(cep);
-
-        return endereco.Content;
+        return await _enderecoService.ObterEndereco(cep);
     }
 
     // GET: api/Enderecos/5
