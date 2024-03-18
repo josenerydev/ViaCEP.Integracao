@@ -1,8 +1,11 @@
+using Microsoft.Extensions.Options;
+
 using Refit;
 
 using ViaCEP.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.Configure<ViaCepOptions>(builder.Configuration.GetSection(ViaCepOptions.ViaCep));
 
 //builder.Services.AddDbContext<ApplicationContext>(options =>
 //    options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationContext") ?? throw new InvalidOperationException("Connection string 'ApplicationContext' not found.")));
@@ -11,7 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IEnderecoService, EnderecoService>();
 
 builder.Services.AddRefitClient<IViaCepApi>()
-    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br/"));
+    .ConfigureHttpClient((serviceProvider, httpClient) =>
+    {
+        var viaCepOptions = serviceProvider.GetRequiredService<IOptions<ViaCepOptions>>().Value;
+        httpClient.BaseAddress = new Uri(viaCepOptions.BaseAddress);
+    });
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -32,3 +39,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program
+{ }
